@@ -1,0 +1,6 @@
+@Top10MediaApi_HostAddress = http://localhost:5236
+
+GET {{Top10MediaApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
