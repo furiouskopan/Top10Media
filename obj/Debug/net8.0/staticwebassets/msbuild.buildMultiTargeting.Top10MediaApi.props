@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Top10MediaApi.props" />
+</Project>
