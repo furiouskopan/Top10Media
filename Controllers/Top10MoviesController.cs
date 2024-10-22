@@ -10,11 +10,12 @@ namespace Top10MediaApi.Controllers
     public class Top10MoviesController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string _tmdbApiKey = "YOUR_TMDB_API_KEY"; // Replace with your TMDb API Key
+        private readonly string _tmdbApiKey;
 
-        public Top10MoviesController(IHttpClientFactory httpClientFactory)
+        public Top10MoviesController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _tmdbApiKey = configuration["TmdbApiKey"];
         }
 
         [HttpGet]
