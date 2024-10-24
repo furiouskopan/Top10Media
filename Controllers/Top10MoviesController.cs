@@ -38,24 +38,35 @@ public class Top10MoviesController : ControllerBase
                 var top10Movies = movieData.RootElement.GetProperty("results")
                                     .EnumerateArray()
                                     .Take(10)
-                                    .Select(movie => new Movie
+                                    .Select(movie => new MovieDTO
                                     {
                                         Title = movie.GetProperty("title").GetString(),
                                         Overview = movie.GetProperty("overview").GetString(),
-                                        ReleaseDate = DateTime.Parse(movie.GetProperty("release_date").GetString()),
+                                        ReleaseDate = DateTime.SpecifyKind(
+                                            DateTime.Parse(movie.GetProperty("release_date").GetString()),
+                                            DateTimeKind.Utc
+                                        ),
                                         Popularity = movie.GetProperty("popularity").GetDouble(),
-                                        Genres = movie.GetProperty("genre_ids").EnumerateArray()
-                                                    .Select(g => new MovieGenre { Id = g.GetInt32(), Name = "GenreName" }).ToList()
-                                    });
+                                        Genres = movie.GetProperty("genre_ids")
+                                                      .EnumerateArray()
+                                                      .Select(genreId => GetGenreName(genreId.GetInt32()))
+                                                      .ToList()
+                                    }).ToList();
 
-                // Save each movie to the database
-                foreach (var movie in top10Movies)
+                // Add movies to the database
+                _context.Movies.AddRange(top10Movies.Select(m => new Movie
                 {
-                    if (!_context.Movies.Any(m => m.Title == movie.Title))
+                    Title = m.Title,
+                    Overview = m.Overview,
+                    ReleaseDate = m.ReleaseDate,
+                    Popularity = m.Popularity,
+                    MovieGenres = m.Genres.Select(genreName => new MovieGenre
                     {
-                        _context.Movies.Add(movie);
-                    }
-                }
+                        Genre = _context.Genres.FirstOrDefault(g => g.Name == genreName)
+                    }).ToList()
+                }));
+
+                // Save the changes
                 await _context.SaveChangesAsync();
 
                 return Ok(top10Movies);
@@ -70,4 +81,62 @@ public class Top10MoviesController : ControllerBase
             return StatusCode(500, $"Error: {e.Message}");
         }
     }
+
+    // Helper method to either fetch or add a genre
+    private Genre GetOrAddGenre(int genreId)
+    {
+        // Check if the genre is already being tracked
+        var trackedGenre = _context.ChangeTracker.Entries<Genre>()
+            .FirstOrDefault(e => e.Entity.Id == genreId)?.Entity;
+
+        if (trackedGenre != null)
+        {
+            return trackedGenre;
+        }
+
+        // Try to find the genre in the database
+        var genre = _context.Genres.SingleOrDefault(g => g.Id == genreId);
+
+        if (genre == null)
+        {
+            // If genre is not found, create a new one
+            genre = new Genre
+            {
+                Id = genreId,
+                Name = GetGenreName(genreId)
+            };
+
+            _context.Genres.Add(genre);  // Add the new genre to the context
+        }
+
+        return genre;
+    }
+
+    private string GetGenreName(int genreId)
+    {
+        // Try to get the genre name from the dictionary, or return "Unknown" if not found
+        return genreDictionary.TryGetValue(genreId, out var genreName) ? genreName : "Unknown";
+    }
+    private readonly Dictionary<int, string> genreDictionary = new Dictionary<int, string>
+    {
+        { 28, "Action" },
+        { 12, "Adventure" },
+        { 16, "Animation" },
+        { 35, "Comedy" },
+        { 80, "Crime" },
+        { 99, "Documentary" },
+        { 18, "Drama" },
+        { 10751, "Family" },
+        { 14, "Fantasy" },
+        { 36, "History" },
+        { 27, "Horror" },
+        { 10402, "Music" },
+        { 9648, "Mystery" },
+        { 10749, "Romance" },
+        { 878, "Science Fiction" },
+        { 10770, "TV Movie" },
+        { 53, "Thriller" },
+        { 10752, "War" },
+        { 37, "Western" }
+    };
 }

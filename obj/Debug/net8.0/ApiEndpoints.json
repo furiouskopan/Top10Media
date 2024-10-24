@@ -1,6 +1,6 @@
 [
   {
-    "ContainingType": "Top10MediaApi.Controllers.Top10MoviesController",
+    "ContainingType": "Top10MoviesController",
     "Method": "GetTop10Movies",
     "RelativePath": "api/Top10Movies",
     "HttpMethod": "GET",
