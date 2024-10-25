@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Top10MediaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+071e261a9e4dac35450c228fc7e990d7de138c31")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4efeba35f59bc23c75fc2f1e397f94607f2b5c97")]
 [assembly: System.Reflection.AssemblyProductAttribute("Top10MediaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Top10MediaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
