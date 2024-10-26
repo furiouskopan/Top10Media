@@ -11,7 +11,7 @@ namespace Top10MediaApi.Services
             _context = context;
         }
 
-        public async Task SaveMoviesAsync(List<MovieDTO> movies)
+        public virtual async Task SaveMoviesAsync(List<MovieDTO> movies)
         {
             var dbMovies = movies.Select(m => new Movie
             {
@@ -29,7 +29,7 @@ namespace Top10MediaApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ClearMoviesAsync()
+        public virtual async Task ClearMoviesAsync()
         {
             _context.Movies.RemoveRange(_context.Movies);
             await _context.SaveChangesAsync();
