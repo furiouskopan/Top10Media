@@ -16,7 +16,7 @@ public class Top10MoviesController : ControllerBase
     public Top10MoviesController(IHttpClientFactory httpClientFactory, IConfiguration configuration, AppDbContext context)
     {
         _httpClientFactory = httpClientFactory;
-        _tmdbApiKey = configuration["TmdbApiKey"];
+        _tmdbApiKey = configuration["TmdbApiKey"] ?? throw new ArgumentNullException(nameof(configuration), "TmdbApiKey is not configured.");
         _context = context;
     }
 
@@ -81,6 +81,18 @@ public class Top10MoviesController : ControllerBase
             return StatusCode(500, $"Error: {e.Message}");
         }
     }
+
+    [HttpPost("reset-top10-movies")]
+    public async Task ResetTop10Movies()
+    {
+        // Clear existing movies
+        _context.Movies.RemoveRange(_context.Movies);
+        await _context.SaveChangesAsync();
+
+        // Fetch new movies from TMDb API
+        await GetTop10Movies();
+    }
+
 
     // Helper method to either fetch or add a genre
     private Genre GetOrAddGenre(int genreId)

@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +29,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHangfire(config => config.UseMemoryStorage());
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,6 +55,18 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard();
+app.UseHangfireDashboard();
+RecurringJob.AddOrUpdate<Top10MoviesController>(
+    recurringJobId: "ResetTop10MoviesJob",
+    methodCall: controller => controller.ResetTop10Movies(),
+    cronExpression: Cron.Weekly,
+    options: new RecurringJobOptions
+    {
+        TimeZone = TimeZoneInfo.Local
+    }
+);
 
 app.MapControllers();
 
