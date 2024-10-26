@@ -24,7 +24,7 @@ namespace Top10MediaApi.Services
         };
         }
 
-        public virtual async Task<List<MovieDTO>> GetTop10MoviesAsync()
+        public async Task<List<MovieDTO>> GetTop10MoviesAsync()
         {
             var tmdbUrl = $"https://api.themoviedb.org/3/movie/popular?api_key={_tmdbApiKey}&language=en-US&page=1";
             var client = _httpClientFactory.CreateClient();
