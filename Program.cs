@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Top10MediaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true; // Optional: To make JSON output more readable
 });
+
+builder.Services.AddScoped<TmdbService>();
+builder.Services.AddScoped<MoviesService>();
 
 // Get connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
