@@ -60,8 +60,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseHangfireDashboard();
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire");
 RecurringJob.AddOrUpdate<Top10MoviesController>(
     recurringJobId: "ResetTop10MoviesJob",
     methodCall: controller => controller.ResetTop10Movies(),
