@@ -11,7 +11,7 @@ using Top10MediaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
+builder.WebHost.UseUrls("http://0.0.0.0:8080", "https://0.0.0.0:443");
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>

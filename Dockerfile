@@ -4,6 +4,13 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Copy the HTTPS certificate
+COPY Certs/localhostCert.pfx /https/localhostCert.pfx
+
+# Set the environment variables for ASP.NET Core to use the HTTPS certificate
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhostCert.pfx
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=Packaras1
+
 # Step 2: Use the official .NET SDK image for building the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

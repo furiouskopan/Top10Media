@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   db:
@@ -18,8 +18,10 @@ services:
       dockerfile: Dockerfile
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=top10media;Username=FuriousKopan;Password=packaras"
+      ASPNETCORE_URLS: "https://+;http://+"
     ports:
       - "8080:8080"
+      - "443:443"
     depends_on:
       - db
 
