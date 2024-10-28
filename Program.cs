@@ -22,6 +22,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddScoped<TmdbService>();
 builder.Services.AddScoped<MoviesService>();
+builder.Services.AddScoped<TvShowsService>();
 
 // Get connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -90,6 +91,16 @@ app.UseHangfireDashboard("/hangfire");
 RecurringJob.AddOrUpdate<Top10MoviesController>(
     recurringJobId: "ResetTop10MoviesJob",
     methodCall: controller => controller.ResetTop10Movies(),
+    cronExpression: Cron.Weekly,
+    options: new RecurringJobOptions
+    {
+        TimeZone = TimeZoneInfo.Local
+    }
+);
+
+RecurringJob.AddOrUpdate<Top10TvShowsController>(
+    recurringJobId: "ResetTop10MoviesJob",
+    methodCall: controller => controller.ResetTop10TvShows(),
     cronExpression: Cron.Weekly,
     options: new RecurringJobOptions
     {

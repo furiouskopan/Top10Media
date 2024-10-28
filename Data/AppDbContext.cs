@@ -10,10 +10,8 @@ public class AppDbContext : DbContext
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<MovieGenre> MovieGenres { get; set; } // Join table for Movie-Genre relationship
-
-    // Optionally, if you add TV shows:
-    // public DbSet<TvShow> TvShows { get; set; }
-    // public DbSet<TvShowGenre> TvShowGenres { get; set; }
+    public DbSet<TvShow> TvShows { get; set; }
+    public DbSet<TvShowGenre> TvShowGenres { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

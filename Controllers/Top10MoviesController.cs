@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Top10MediaApi.Services;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class Top10MoviesController : ControllerBase

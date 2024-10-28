@@ -53,5 +53,35 @@ namespace Top10MediaApi.Services
                         .ToList()
                 }).ToList();
         }
+        public async Task<List<TvShowDTO>> GetTop10TvShowsAsync()
+        {
+            var tmdbUrl = $"https://api.themoviedb.org/3/tv/popular?api_key={_tmdbApiKey}&language=en-US&page=1";
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(tmdbUrl);
+
+            if (!response.IsSuccessStatusCode)
+                throw new HttpRequestException("Error fetching data from TMDb");
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var tvShowData = JsonDocument.Parse(jsonResponse);
+
+            return tvShowData.RootElement.GetProperty("results")
+                .EnumerateArray()
+                .Take(10)
+                .Select(tvShow => new TvShowDTO
+                {
+                    Title = tvShow.GetProperty("name").GetString(),
+                    Overview = tvShow.GetProperty("overview").GetString(),
+                    ReleaseDate = DateTime.SpecifyKind(
+                        DateTime.Parse(tvShow.GetProperty("first_air_date").GetString()),
+                        DateTimeKind.Utc),
+                    Popularity = tvShow.GetProperty("popularity").GetDouble(),
+                    Genres = tvShow.GetProperty("genre_ids")
+                        .EnumerateArray()
+                        .Select(genreId => _genreDictionary.TryGetValue(genreId.GetInt32(), out var genre) ? genre : "Unknown")
+                        .ToList()
+                }).ToList();
+        }
+
     }
 }
