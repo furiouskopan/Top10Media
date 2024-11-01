@@ -5,14 +5,17 @@ namespace Top10MediaApi.Services
     public class MoviesService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<MoviesService> _logger;
 
-        public MoviesService(AppDbContext context)
+        public MoviesService(AppDbContext context, ILogger<MoviesService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task SaveMoviesAsync(List<MovieDTO> movies)
         {
+            _logger.LogInformation("Saving movies to the database.");
             var dbMovies = movies.Select(m => new Movie
             {
                 Title = m.Title,
@@ -27,6 +30,8 @@ namespace Top10MediaApi.Services
 
             _context.Movies.AddRange(dbMovies);
             await _context.SaveChangesAsync();
+
+            _logger.LogWarning("Movies have been successfully saved.");
         }
 
         public async Task ClearMoviesAsync()

@@ -6,10 +6,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 using Top10MediaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.WithProperty("Application", "Top10MediaApi")
+    .WriteTo.Console()
+    //.WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.WebHost.UseUrls("http://0.0.0.0:8080", "https://0.0.0.0:443");
 
@@ -81,6 +90,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.RoutePrefix = string.Empty; // This makes Swagger available at the root
     });
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseRouting();
 
