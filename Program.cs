@@ -30,8 +30,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddScoped<TmdbService>();
+builder.Services.AddScoped<RawgService>();
 builder.Services.AddScoped<MoviesService>();
 builder.Services.AddScoped<TvShowsService>();
+builder.Services.AddScoped<GamesService>();
 
 // Get connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

@@ -11,7 +11,9 @@ public class AppDbContext : DbContext
     public DbSet<Genre> Genres { get; set; }
     public DbSet<MovieGenre> MovieGenres { get; set; } // Join table for Movie-Genre relationship
     public DbSet<TvShow> TvShows { get; set; }
+    public DbSet<Game> Games { get; set; }
     public DbSet<TvShowGenre> TvShowGenres { get; set; }
+    public DbSet<GameGenre> GameGenres { get; set; } 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,5 +34,18 @@ public class AppDbContext : DbContext
         // Optionally for TV Shows:
         // modelBuilder.Entity<TvShowGenre>()
         //    .HasKey(tg => new { tg.TvShowId, tg.GenreId });
+
+        modelBuilder.Entity<GameGenre>()
+            .HasKey(gg => new { gg.GameId, gg.GenreId });
+
+        modelBuilder.Entity<GameGenre>()
+            .HasOne(gg => gg.Game)
+            .WithMany(g => g.GameGenres)
+            .HasForeignKey(gg => gg.GameId);
+
+        modelBuilder.Entity<GameGenre>()
+            .HasOne(gg => gg.Genre)
+            .WithMany(g => g.GameGenres)
+            .HasForeignKey(gg => gg.GenreId);
     }
 }
