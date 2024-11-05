@@ -45,7 +45,9 @@ namespace Top10MediaApi.Services
             foreach (var game in gameData.RootElement.GetProperty("results").EnumerateArray())
             {
                 var title = game.GetProperty("name").GetString() ?? "Unknown Title";
-                var releaseDate = DateTime.TryParse(game.GetProperty("released").GetString(), out var date) ? date : (DateTime?)null;
+                var releaseDate = DateTime.TryParse(game.GetProperty("released").GetString(), out var date)
+                    ? DateTime.SpecifyKind(date, DateTimeKind.Utc)
+                    : (DateTime?)null;
                 var popularity = game.TryGetProperty("added", out var addedProp) ? (double)addedProp.GetInt32()
                         : (game.TryGetProperty("metacritic", out var metacriticProp) ? metacriticProp.GetDouble() : 0.0);
                 var genres = game.GetProperty("genres").EnumerateArray()

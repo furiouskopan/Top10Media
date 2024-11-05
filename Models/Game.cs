@@ -7,6 +7,6 @@
         public DateTime ReleaseDate { get; set; }
         public string Overview { get; set; }
         public double Popularity { get; set; }
-        public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
+        public List<string> Genres { get; set; } = new List<string>();
     }
 }

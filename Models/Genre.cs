@@ -7,6 +7,5 @@
 
         // Relationship to Movies
         public ICollection<MovieGenre> MovieGenres { get; set; } // Join table for many-to-many relationship
-        public ICollection<GameGenre> GameGenres { get; set; } // Join table for many-to-many relationship
     }
 }

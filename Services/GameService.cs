@@ -21,40 +21,30 @@ namespace Top10MediaApi.Services
         {
             _logger.LogInformation("Saving games to the database.");
 
-            var dbGames = games.Select(g => new Game
+            foreach (var gameDto in games)
             {
-                Title = g.Title,
-                Overview = g.Overview,
-                ReleaseDate = g.ReleaseDate ?? DateTime.MinValue, // Provide a default value for null dates
-                Popularity = g.Popularity,
-                GameGenres = g.Genres.Select(genreName => new GameGenre
+                var dbGame = new Game
                 {
-                    Genre = GetOrAddGenre(genreName)
-                }).ToList()
-            }).ToList();
+                    Title = gameDto.Title,
+                    Overview = gameDto.Overview,
+                    ReleaseDate = gameDto.ReleaseDate.HasValue
+                      ? DateTime.SpecifyKind(gameDto.ReleaseDate.Value, DateTimeKind.Utc)
+                      : DateTime.UtcNow,
+                    Popularity = gameDto.Popularity,
+                    Genres = gameDto.Genres // Directly assign genres
+                };
 
-            _context.Games.AddRange(dbGames);
+                _context.Games.Add(dbGame);
+            }
+
             await _context.SaveChangesAsync();
-
-            _logger.LogWarning("Games have been successfully saved.");
+            _logger.LogInformation("Games have been successfully saved.");
         }
-
         public async Task ClearGamesAsync()
         {
             _context.Games.RemoveRange(_context.Games);
             await _context.SaveChangesAsync();
             _logger.LogInformation("All games have been cleared from the database.");
-        }
-
-        private Genre GetOrAddGenre(string genreName)
-        {
-            var genre = _context.Genres.SingleOrDefault(g => g.Name == genreName);
-            if (genre == null)
-            {
-                genre = new Genre { Name = genreName };
-                _context.Genres.Add(genre);
-            }
-            return genre;
         }
     }
 }
