@@ -13,7 +13,7 @@ namespace Top10MediaApi.Services
         public RawgService(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<RawgService> logger)
         {
             _httpClientFactory = httpClientFactory;
-            _rawgApiKey = configuration["RawgApiKey"] ?? throw new ArgumentNullException(nameof(configuration), "RAWGApiKey is not configured.");
+            _rawgApiKey = Environment.GetEnvironmentVariable("RawgApiKey");
             _logger = logger;
         }
 

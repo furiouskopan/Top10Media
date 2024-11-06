@@ -121,6 +121,16 @@ RecurringJob.AddOrUpdate<Top10TvShowsController>(
     }
 );
 
+RecurringJob.AddOrUpdate<Top10GamesController>(
+    recurringJobId: "ResetTop10GamesJob",
+    methodCall: controller => controller.ResetTop10Games(),
+    cronExpression: Cron.Weekly,
+    options: new RecurringJobOptions
+    {
+        TimeZone = TimeZoneInfo.Local
+    }
+);
+
 app.MapControllers();
 
 app.Run();

@@ -14,7 +14,7 @@ namespace Top10MediaApi.Services
         public TmdbService(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<TmdbService> logger)
         {
             _httpClientFactory = httpClientFactory;
-            _tmdbApiKey = configuration["TmdbApiKey"] ?? throw new ArgumentNullException(nameof(configuration), "TmdbApiKey is not configured.");
+            _tmdbApiKey = Environment.GetEnvironmentVariable("TmdbApiKey");
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _genreDictionary = new Dictionary<int, string>
