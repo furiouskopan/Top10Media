@@ -1,4 +1,6 @@
-﻿namespace Top10MediaApi.Models
+﻿using Top10MediaApi.Models.Movies;
+
+namespace Top10MediaApi.Models
 {
     public class Genre
     {

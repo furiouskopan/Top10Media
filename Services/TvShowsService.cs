@@ -1,4 +1,5 @@
 ﻿using Top10MediaApi.Models;
+using Serilog;
 
 namespace Top10MediaApi.Services
 {
@@ -13,6 +14,8 @@ namespace Top10MediaApi.Services
 
         public async Task SaveTvShowsAsync(List<TvShowDTO> tvShows)
         {
+            Log.Information("Saving {TvShowCount} TV shows to the database.", tvShows.Count);
+
             var dbTvShows = tvShows.Select(t => new TvShow
             {
                 Title = t.Title,
@@ -26,13 +29,35 @@ namespace Top10MediaApi.Services
             }).ToList();
 
             _context.TvShows.AddRange(dbTvShows);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                Log.Information("Successfully saved {TvShowCount} TV shows to the database.", tvShows.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while saving TV shows: {ErrorMessage}", ex.Message);
+                throw; // Re-throw the exception for handling by the caller
+            }
         }
 
         public async Task ClearTvShowsAsync()
         {
+            Log.Information("Clearing all TV shows from the database.");
+
             _context.TvShows.RemoveRange(_context.TvShows);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                Log.Information("Successfully cleared all TV shows from the database.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while clearing TV shows: {ErrorMessage}", ex.Message);
+                throw; // Re-throw the exception for handling by the caller
+            }
         }
 
         private Genre GetOrAddGenre(string genreName)

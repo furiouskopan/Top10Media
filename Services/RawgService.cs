@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Serilog;
 using System.Text.Json;
-using Top10MediaApi.Models;
+using Top10MediaApi.Models.Games;
 
 namespace Top10MediaApi.Services
 {
@@ -8,18 +9,16 @@ namespace Top10MediaApi.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _rawgApiKey;
-        private readonly ILogger<RawgService> _logger;
 
-        public RawgService(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<RawgService> logger)
+        public RawgService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
             _rawgApiKey = Environment.GetEnvironmentVariable("RawgApiKey");
-            _logger = logger;
         }
 
         public async Task<List<GameDTO>> GetTop10GamesAsync()
         {
-            _logger.LogInformation("Fetching top 10 popular games from RAWG.");
+            Log.Information("Fetching top 10 popular games from RAWG.");
 
             //var currentMonth = DateTime.UtcNow.ToString("yyyy-MM");
             var endDate = DateTime.UtcNow;
@@ -31,11 +30,11 @@ namespace Top10MediaApi.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError("Failed to fetch games from RAWG. Status code: {StatusCode}", response.StatusCode);
+                Log.Error("Failed to fetch games from RAWG. Status code: {StatusCode}", response.StatusCode);
                 throw new HttpRequestException("Error fetching data from RAWG");
             }
 
-            _logger.LogInformation("Successfully fetched game data from RAWG.");
+            Log.Information("Successfully fetched game data from RAWG.");
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var gameData = JsonDocument.Parse(jsonResponse);
@@ -72,7 +71,7 @@ namespace Top10MediaApi.Services
                     }
                     else
                     {
-                        _logger.LogWarning("Failed to fetch detailed description for game: {Title}", title);
+                        Log.Warning("Failed to fetch detailed description for game: {Title}", title);
                     }
                 }
                 else
@@ -90,7 +89,7 @@ namespace Top10MediaApi.Services
                 });
             }
 
-            _logger.LogInformation("Successfully parsed {Count} games from RAWG response.", games.Count);
+            Log.Information("Successfully parsed {Count} games from RAWG response.", games.Count);
 
             return games;
         }

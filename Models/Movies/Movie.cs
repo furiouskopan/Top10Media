@@ -1,12 +1,12 @@
-﻿namespace Top10MediaApi.Models
+﻿namespace Top10MediaApi.Models.Movies
 {
-    public class Game
+    public class Movie
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Overview { get; set; }
         public double Popularity { get; set; }
-        public List<string> Genres { get; set; } = new List<string>();
+        public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     }
 }

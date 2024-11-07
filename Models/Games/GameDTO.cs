@@ -1,4 +1,4 @@
-﻿namespace Top10MediaApi.Models
+﻿namespace Top10MediaApi.Models.Games
 {
     public class GameDTO
     {

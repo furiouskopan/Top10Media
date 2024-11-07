@@ -34,6 +34,7 @@ builder.Services.AddScoped<RawgService>();
 builder.Services.AddScoped<MoviesService>();
 builder.Services.AddScoped<TvShowsService>();
 builder.Services.AddScoped<GamesService>();
+builder.Services.AddScoped<UserService>();
 
 // Get connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

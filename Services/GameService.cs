@@ -1,25 +1,24 @@
-﻿using Top10MediaApi.Models;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Top10MediaApi.Models.Games;
 
 namespace Top10MediaApi.Services
 {
     public class GamesService
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<GamesService> _logger;
 
-        public GamesService(AppDbContext context, ILogger<GamesService> logger)
+        public GamesService(AppDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public async Task SaveGamesAsync(List<GameDTO> games)
         {
-            _logger.LogInformation("Saving games to the database.");
+            Log.Information("Saving games to the database.");
 
             foreach (var gameDto in games)
             {
@@ -38,13 +37,13 @@ namespace Top10MediaApi.Services
             }
 
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Games have been successfully saved.");
+            Log.Information("Games have been successfully saved.");
         }
         public async Task ClearGamesAsync()
         {
             _context.Games.RemoveRange(_context.Games);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("All games have been cleared from the database.");
+            Log.Information("All games have been cleared from the database.");
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Top10MediaApi.Models;
+using Top10MediaApi.Models.Games;
+using Top10MediaApi.Models.Movies;
+using Top10MediaApi.Models.Users;
 
 public class AppDbContext : DbContext
 {
@@ -13,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<TvShow> TvShows { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<TvShowGenre> TvShowGenres { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
