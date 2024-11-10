@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Game> Games { get; set; }
     public DbSet<TvShowGenre> TvShowGenres { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<UserMediaList> UserMediaLists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,5 +34,13 @@ public class AppDbContext : DbContext
             .HasOne(mg => mg.Genre)
             .WithMany(g => g.MovieGenres)
             .HasForeignKey(mg => mg.GenreId);
+
+        modelBuilder.Entity<UserMediaList>()
+            .HasKey(um => um.Id);
+
+        modelBuilder.Entity<UserMediaList>()
+            .HasOne(um => um.User)
+            .WithMany(u => u.UserMediaList)
+            .HasForeignKey(um => um.UserId);
     }
 }

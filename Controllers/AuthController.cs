@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Top10MediaApi.Models.Users;
 using Top10MediaApi.Services;
 using System;
@@ -13,30 +12,37 @@ namespace Top10MediaApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly JWTGenerator _jwtGenerator;
 
-        public AuthController(UserService userService)
+        public AuthController(UserService userService, JWTGenerator jwtGenerator)
         {
             _userService = userService;
+            _jwtGenerator = jwtGenerator;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid input data" });
+            }
+
             try
             {
-                Log.Information("Registering user with username: {@Username}", registerDto.Username);
+                Log.Information("Registering user");
 
                 var user = await _userService.RegisterUserAsync(registerDto.Username, registerDto.Password, registerDto.Email);
                 return Ok(new { user.Id, user.Username });
             }
             catch (ArgumentException ex)
             {
-                Log.Warning(ex, "Validation failed during registration for username: {@Username}", registerDto.Username);
+                Log.Warning("Validation failed during registration: {Message}", ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "An unexpected error occurred while registering user with username: {@Username}", registerDto.Username);
+                Log.Error("Unexpected error while registering user: {Message}", ex.Message);
                 return StatusCode(500, new { message = "An unexpected error occurred. Please try again later." });
             }
         }
@@ -44,24 +50,28 @@ namespace Top10MediaApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid input data" });
+            }
+
             try
             {
-                Log.Information("User attempting login with username: {@Username}", loginDto.Username);
+                Log.Information("User attempting login");
 
                 var user = await _userService.ValidateUserAsync(loginDto.Username, loginDto.Password);
                 if (user == null)
                 {
-                    Log.Warning("Invalid login attempt for username: {@Username}", loginDto.Username);
+                    Log.Warning("Invalid login attempt");
                     return Unauthorized(new { message = "Invalid username or password" });
                 }
 
-                Log.Information("User {@Username} logged in successfully", user.Username);
-                // Here, you would generate and return a JWT (this will be covered in the next steps)
-                return Ok(new { message = "Login successful" });
+                var token = _jwtGenerator.GenerateJwtToken(user.Id.ToString());
+                return Ok(new { message = "Login successful", token });
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "An unexpected error occurred during login for username: {@Username}", loginDto.Username);
+                Log.Error("Unexpected error during login: {Message}", ex.Message);
                 return StatusCode(500, new { message = "An unexpected error occurred. Please try again later." });
             }
         }
